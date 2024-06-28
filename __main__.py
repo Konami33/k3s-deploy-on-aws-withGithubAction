@@ -110,9 +110,10 @@ import pulumi_aws as aws
 import os
 import subprocess
 
-# Generate SSH key pair
+# Generate SSH key pair if not exists
 ssh_key_path = os.path.join(os.getcwd(), "id_rsa")
-subprocess.run(["ssh-keygen", "-t", "rsa", "-b", "2048", "-f", ssh_key_path, "-q", "-N", ""])
+if not os.path.exists(ssh_key_path):
+    subprocess.run(["ssh-keygen", "-t", "rsa", "-b", "2048", "-f", ssh_key_path, "-q", "-N", ""])
 
 # Read the generated private and public key
 with open(ssh_key_path, "r") as f:
@@ -130,7 +131,7 @@ key_pair = aws.ec2.KeyPair("my-key-pair",
 vpc = aws.ec2.Vpc("my-vpc",
     cidr_block="10.0.0.0/16",
     enable_dns_hostnames=True,
-    enable_dns_support=True
+    enable_dns_support=True,
 )
 
 subnet = aws.ec2.Subnet("my-subnet",
