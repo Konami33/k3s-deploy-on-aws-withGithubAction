@@ -4,7 +4,7 @@ import pulumi_aws as aws
 # Configuration
 config = pulumi.Config()
 instance_type = "t3.small"
-ami_id = 'ami-04b70fa74e45c3917'
+ami_id = 'ami-0705384c0b33c194c'
 
 # Create VPC
 vpc = aws.ec2.Vpc("my-vpc",
