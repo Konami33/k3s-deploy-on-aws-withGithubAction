@@ -3,8 +3,8 @@ import pulumi_aws as aws
 
 # Configuration
 config = pulumi.Config()
-instance_type = config.get("instance_type") or "t2.medium"
-ami_id = config.get("ami_id") or "ami-0abcdef1234567890"
+instance_type = "t3.small"
+ami_id = 'ami-04b70fa74e45c3917'
 
 # Create VPC
 vpc = aws.ec2.Vpc("my-vpc",
@@ -18,7 +18,7 @@ public_subnet = aws.ec2.Subnet("public-subnet",
     vpc_id=vpc.id,
     cidr_block="10.0.1.0/24",
     map_public_ip_on_launch=True,
-    availability_zone="us-west-2a",
+    availability_zone="ap-southeast-1",
 )
 
 # Create Internet Gateway
@@ -102,3 +102,5 @@ worker2 = aws.ec2.Instance("worker-node-2",
 pulumi.export("master_public_ip", master.public_ip)
 pulumi.export("worker1_public_ip", worker1.public_ip)
 pulumi.export("worker2_public_ip", worker2.public_ip)
+
+
