@@ -11,6 +11,7 @@ vpc = aws.ec2.Vpc("my-vpc",
     cidr_block="10.0.0.0/16",
     enable_dns_support=True,
     enable_dns_hostnames=True,
+    tags={"Name": "my-vpc"}
 )
 
 # Create Public Subnet
@@ -18,7 +19,7 @@ public_subnet = aws.ec2.Subnet("public-subnet",
     vpc_id=vpc.id,
     cidr_block="10.0.1.0/24",
     map_public_ip_on_launch=True,
-    availability_zone="ap-southeast-1",
+    availability_zone="ap-southeast-1a",
 )
 
 # Create Internet Gateway
