@@ -64,11 +64,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           echo "Creating GitHub Secret for SSH private key"
-          PUB_KEY=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/${{ github.repository }}/actions/secrets/public-key | jq -r .key)
-          KEY_ID=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/${{ github.repository }}/actions/secrets/public-key | jq -r .key_id)
+          PUB_KEY=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/Konami33/actions/secrets/public-key | jq -r .key)
+          KEY_ID=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/Konami33/actions/secrets/public-key | jq -r .key_id)
           ENCRYPTED_VALUE=$(echo -n "$PRIVATE_KEY" | openssl pkeyutl -encrypt -pubin -inkey <(echo "$PUB_KEY") | base64 -w 0)
-          curl -X PUT -H "Authorization: token $GH_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/secrets/SSH_PRIVATE_KEY \
+          curl -L \
+            -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2024-06-29" \
+            https://api.github.com/repos/Konami33/k3s-deploy-on-aws-withGithubAction/actions/secrets/SSH_PRIVATE_KEY \
             -d "{\"encrypted_value\":\"$ENCRYPTED_VALUE\",\"key_id\":\"$KEY_ID\"}"
 
