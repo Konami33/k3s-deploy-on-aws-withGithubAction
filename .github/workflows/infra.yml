@@ -39,6 +39,9 @@ jobs:
       - name: Pulumi stack selection
         run: pulumi stack select dev
 
+      - name: Pulumi refresh
+        run: pulumi refresh --yes
+
       - name: Pulumi preview
         id: pulumi-preview
         run: pulumi preview --json > preview.json
