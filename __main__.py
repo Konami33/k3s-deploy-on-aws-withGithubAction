@@ -3,15 +3,14 @@ import pulumi_aws as aws
 
 # Configuration
 config = pulumi.Config()
-instance_type = "t3.small"
-ami_id = 'ami-0705384c0b33c194c'
+instance_type = "t2.micro"
+ami_id = 'ami-003c463c8207b4dfa'
 
 # Create VPC
 vpc = aws.ec2.Vpc("my-vpc",
     cidr_block="10.0.0.0/16",
     enable_dns_support=True,
     enable_dns_hostnames=True,
-    tags={"Name": "my-vpc"}
 )
 
 # Create Public Subnet
