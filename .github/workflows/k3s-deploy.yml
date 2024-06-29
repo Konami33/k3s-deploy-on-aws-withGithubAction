@@ -17,7 +17,7 @@ jobs:
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ steps.set_pulumi_outputs.outputs.private_key }}
 
       - name: Deploy k3s master node
         run: |
