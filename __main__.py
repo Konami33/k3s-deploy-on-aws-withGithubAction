@@ -32,7 +32,7 @@ public_subnet = aws.ec2.Subnet("public-subnet",
     vpc_id=vpc.id,
     cidr_block="10.0.1.0/24",
     map_public_ip_on_launch=True,
-    availability_zone="ap-southeast-1a",
+    availability_zone="us-east-1",
 )
 
 # Create Internet Gateway
@@ -82,7 +82,8 @@ security_group = aws.ec2.SecurityGroup("web-secgrp",
 )
 
 # Create instances in the VPC and subnet
-ami_id = "ami-003c463c8207b4dfa"  # Replace with a valid AMI ID for your region
+# ami_id = "ami-003c463c8207b4dfa"  # Replace with a valid AMI ID for your region
+ami_id = "ami-04b70fa74e45c3917"
 instance_type = "t2.micro"
 
 master_node = aws.ec2.Instance("master-node",
