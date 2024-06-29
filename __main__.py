@@ -96,6 +96,7 @@ master_node = aws.ec2.Instance("master-node",
         "Name": "master-node"
     })
 
+
 worker_node_1 = aws.ec2.Instance("worker-node-1",
     instance_type=instance_type,
     ami=ami_id,
