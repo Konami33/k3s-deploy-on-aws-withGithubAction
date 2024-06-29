@@ -72,10 +72,6 @@ security_group = aws.ec2.SecurityGroup("web-secgrp",
             "to_port": 6443,
             "cidr_blocks": ["0.0.0.0/0"],
         },
-        {
-            "protocol": "tcp",
-
-        }
     ],
     egress=[{
         "protocol": "-1",
