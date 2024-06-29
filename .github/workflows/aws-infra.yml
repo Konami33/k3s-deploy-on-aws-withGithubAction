@@ -75,7 +75,7 @@ jobs:
           # Encrypt the private key using the public key
           ENCRYPTED_VALUE=$(openssl rsautl -encrypt -pubin -inkey <(echo "$PUB_KEY") -in private_key.pem | base64 -w 0)
           
-          # Create or update the GitHub secret
+          # Create orr update the GitHub secret
           curl -X PUT \
             -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
