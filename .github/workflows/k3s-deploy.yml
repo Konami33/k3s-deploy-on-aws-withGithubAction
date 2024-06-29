@@ -80,13 +80,18 @@ jobs:
           WORKER1_IP=$(pulumi stack output worker1_public_ip)
           WORKER2_IP=$(pulumi stack output worker2_public_ip)
           PRIVATE_KEY=$(pulumi stack output private_key)
+          echo "MASTER_IP=$MASTER_IP" >> $GITHUB_ENV
+          echo "WORKER1_IP=$WORKER1_IP" >> $GITHUB_ENV
+          echo "WORKER2_IP=$WORKER2_IP" >> $GITHUB_ENV
+          echo "$PRIVATE_KEY" > private_key.pem
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ steps.pulumi_outputs.outputs.private_key }}
+          ssh-private-key: |
+            $(cat private_key.pem)
 
       - name: Deploy k3s master node
         run: |
