@@ -56,6 +56,8 @@ jobs:
           echo "MASTER_IP=$MASTER_IP" >> $GITHUB_ENV
           echo "WORKER1_IP=$WORKER1_IP" >> $GITHUB_ENV
           echo "WORKER2_IP=$WORKER2_IP" >> $GITHUB_ENV
+
+          echo "$PRIVATE_KEY" > private_key.pem
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
@@ -64,14 +66,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           echo "Creating GitHub Secret for SSH private key"
-          PUB_KEY=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/Konami33/actions/secrets/public-key | jq -r .key)
-          KEY_ID=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/Konami33/actions/secrets/public-key | jq -r .key_id)
-          ENCRYPTED_VALUE=$(echo -n "$PRIVATE_KEY" | openssl pkeyutl -encrypt -pubin -inkey <(echo "$PUB_KEY") | base64 -w 0)
-          curl -L \
-            -X PUT \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "X-GitHub-Api-Version: 2024-06-29" \
-            https://api.github.com/repos/Konami33/k3s-deploy-on-aws-withGithubAction/actions/secrets/SSH_PRIVATE_KEY \
+          
+          # Fetch the public key and key ID
+          PUB_KEY_RESPONSE=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/${{ github.repository }}/actions/secrets/public-key)
+          PUB_KEY=$(echo "$PUB_KEY_RESPONSE" | jq -r .key)
+          KEY_ID=$(echo "$PUB_KEY_RESPONSE" | jq -r .key_id)
+          
+          # Encrypt the private key using the public key
+          ENCRYPTED_VALUE=$(openssl rsautl -encrypt -pubin -inkey <(echo "$PUB_KEY") -in private_key.pem | base64 -w 0)
+          
+          # Create or update the GitHub secret
+          curl -X PUT \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/secrets/SSH_PRIVATE_KEY \
             -d "{\"encrypted_value\":\"$ENCRYPTED_VALUE\",\"key_id\":\"$KEY_ID\"}"
-
