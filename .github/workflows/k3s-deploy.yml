@@ -87,11 +87,16 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: |
-            $(cat private_key.pem)
+      - name: Add SSH private key to agent
+        run: |
+          mkdir -p ~/.ssh
+          echo "$(<private_key.pem)" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent)"
+          ssh-add ~/.ssh/id_rsa
+
+      - name: Test SSH connection
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.MASTER_IP }} "echo Connected"
 
       - name: Deploy k3s master node
         run: |
@@ -110,3 +115,4 @@ jobs:
           WORKER2_IP=${{ env.WORKER2_IP }}
           NODE_TOKEN=$(ssh -o StrictHostKeyChecking=no ubuntu@$MASTER_IP "sudo cat /var/lib/rancher/k3s/server/node-token")
           ssh -o StrictHostKeyChecking=no ubuntu@$WORKER2_IP "curl -sfL https://get.k3s.io | K3S_URL=https://$MASTER_IP:6443 K3S_TOKEN=$NODE_TOKEN sh -"
+
